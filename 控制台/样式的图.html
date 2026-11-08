@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>侧边栏面板 · 几种样式</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font: 13px/1.5 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #eef0f4; color: #1c1e24; padding: 24px;
+    display: flex; gap: 18px; align-items: flex-start;
+  }
+  .col { width: 360px; flex: none; }
+  .tag { font-size: 11px; color: #6b7280; margin-bottom: 7px; letter-spacing: .04em; }
+  .tag b { color: #1c1e24; font-size: 12px; }
+
+  /* ── 通用 ── */
+  .panel { height: 700px; border-radius: 14px; overflow: hidden; background: #fff;
+           border: 1px solid #d9dde5; display: flex; flex-direction: column; }
+  .hd { padding: 13px 15px 11px; border-bottom: 1px solid #e8ebf0; display: flex; align-items: center; gap: 8px; }
+  .hd .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+  .hd .t { font-weight: 650; font-size: 13.5px; }
+  .hd .v { font-size: 10.5px; color: #9aa3b2; margin-left: auto; }
+  .bd { flex: 1; overflow: hidden; }
+  .mut { color: #8b94a3; }
+
+  /* ── A 卡片堆叠 ── */
+  .A .bd { padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+  .A .card { border: 1px solid #e2e6ee; border-radius: 10px; overflow: hidden; background: #fff; }
+  .A .card > h4 { font-size: 11.5px; font-weight: 650; color: #4a5262; padding: 9px 12px;
+                  background: #f7f9fc; display: flex; justify-content: space-between; }
+  .A .card > h4 span { color: #9aa3b2; font-weight: 400; }
+  .A .card > div { padding: 11px 12px; }
+  .A .big { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+  .A .big small { font-size: 11px; font-weight: 400; color: #8b94a3; margin-left: 4px; }
+  .A .row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px;
+            border-top: 1px dashed #eef1f6; }
+  .A .row:first-of-type { border-top: 0; }
+  .A .row b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .A .ev { font-size: 11.5px; padding: 6px 0; border-top: 1px dashed #eef1f6; color: #3d4453; }
+  .A .ev:first-child { border-top: 0; }
+  .A .ev i { color: #9aa3b2; font-style: normal; margin-right: 5px; }
+
+  /* ── B 极简清单 ── */
+  .B .bd { padding: 4px 0; }
+  .B h5 { font-size: 10.5px; font-weight: 650; color: #9aa3b2; letter-spacing: .08em;
+          padding: 14px 18px 5px; text-transform: uppercase; }
+  .B .li { display: flex; justify-content: space-between; align-items: baseline;
+           padding: 8px 18px; font-size: 12.5px; }
+  .B .li + .li { border-top: 1px solid #f2f4f8; }
+  .B .li b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .B .li .sub { color: #9aa3b2; font-size: 11px; }
+  .B .hr { height: 1px; background: #eceff4; margin: 8px 18px; }
+
+  /* ── C 仪表盘网格 ── */
+  .C .bd { padding: 14px; }
+  .C .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .C .cell { border: 1px solid #e5e9f0; border-radius: 10px; padding: 11px 12px 10px;
+             background: linear-gradient(180deg, #fbfcfe, #fff); }
+  .C .cell .n { font-size: 22px; font-weight: 720; letter-spacing: -.03em; line-height: 1.1; }
+  .C .cell .l { font-size: 10.5px; color: #8b94a3; margin-top: 2px; }
+  .C .sec { font-size: 10.5px; color: #9aa3b2; letter-spacing: .08em; margin: 16px 0 7px; font-weight: 650; }
+  .C .chart { display: flex; align-items: flex-end; gap: 4px; height: 56px; }
+  .C .chart i { flex: 1; border-radius: 3px 3px 1px 1px; background: linear-gradient(180deg, #7c8cf8, #6366f1); }
+  .C .chart i:last-child { outline: 2px solid #a5b4fc; outline-offset: 1px; }
+  .C .xl { display: flex; justify-content: space-between; font-size: 9.5px; color: #a8b0bd; margin-top: 4px; }
+  .C .strip { margin-top: 16px; display: flex; gap: 8px; }
+  .C .strip span { flex: 1; text-align: center; font-size: 10.5px; padding: 6px 0; border-radius: 7px;
+                   background: #f3f5fa; color: #5b6474; }
+  .C .strip span.on { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+
+  /* ── D 时间线 ── */
+  .D .bd { padding: 14px 16px; overflow-y: auto; }
+  .D .sum { display: flex; gap: 14px; padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px solid #eef1f6; }
+  .D .sum div { font-size: 10.5px; color: #8b94a3; }
+  .D .sum b { display: block; font-size: 17px; color: #1c1e24; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .D .tl { position: relative; padding-left: 16px; }
+  .D .tl::before { content: ""; position: absolute; left: 3px; top: 8px; bottom: 8px; width: 1.5px; background: #e2e6ee; }
+  .D .it { position: relative; padding: 7px 0; font-size: 12px; }
+  .D .it::before { content: ""; position: absolute; left: -16px; top: 13px; width: 7px; height: 7px;
+                   border-radius: 50%; background: #c7cdd8; border: 2px solid #fff; box-shadow: 0 0 0 1.5px #e2e6ee; }
+  .D .it.new::before { background: #6366f1; box-shadow: 0 0 0 1.5px #c7d2fe; }
+  .D .it time { color: #9aa3b2; font-size: 10.5px; margin-right: 6px; font-variant-numeric: tabular-nums; }
+
+  /* ── E 深色玻璃 ── */
+  .E .panel { background: #0d1017; border-color: #1e2530; }
+  .E .hd { border-color: #1a202b; }
+  .E .hd .t { color: #eef1f6; }
+  .E .bd { padding: 14px; overflow-y: auto; }
+  .E .glow { border-radius: 12px; padding: 13px 14px; margin-bottom: 9px;
+             background: linear-gradient(150deg, rgba(99,102,241,.20), rgba(168,85,247,.10) 60%, rgba(99,102,241,.05));
+             border: 1px solid rgba(129,140,248,.28); }
+  .E .glow .n { font-size: 25px; font-weight: 730; color: #f2f4f8; letter-spacing: -.03em; }
+  .E .glow .n small { font-size: 11px; font-weight: 400; color: #9aa3b2; margin-left: 4px; }
+  .E .glow .l { font-size: 10.5px; color: #8b94a3; margin-top: 2px; }
+  .E .mini { display: flex; gap: 9px; margin-bottom: 9px; }
+  .E .mini > div { flex: 1; border-radius: 10px; padding: 10px 11px; background: #141a24; border: 1px solid #1e2530; }
+  .E .mini .n { font-size: 16px; font-weight: 700; color: #e8ebf1; }
+  .E .mini .l { font-size: 10px; color: #6f7887; margin-top: 1px; }
+  .E .list { border-radius: 11px; overflow: hidden; border: 1px solid #1e2530; background: #121821; }
+  .E .list .r { padding: 9px 12px; font-size: 12px; color: #c8cfdb; display: flex; justify-content: space-between; }
+  .E .list .r + .r { border-top: 1px solid #1a202b; }
+  .E .list .r b { color: #eef1f6; font-weight: 600; }
+  .E .list .r span { color: #6f7887; font-size: 11px; }
+  .E .hint { font-size: 10.5px; color: #5f6877; margin-top: 11px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- A -->
+<div class="col A">
+  <div class="tag"><b>A</b> · 卡片堆叠（现状的收窄版）</div>
+  <div class="panel">
+    <div class="hd"><span class="dot"></span><span class="t">记忆</span><span class="v">刚刷新</span></div>
+    <div class="bd">
+      <div class="card"><h4>简报 <span>每轮注入</span></h4><div><div class="big">3420<small>字</small></div></div></div>
+      <div class="card"><h4>库 <span>83440 KB</span></h4><div>
+        <div class="row"><span>文件</span><b>286 份</b></div>
+        <div class="row"><span>近两周改动</span><b>186 份次</b></div>
+      </div></div>
+      <div class="card"><h4>今天 <span>8 条</span></h4><div>
+        <div class="ev"><i>21:55</i>QQ 掉登录已 70 分钟</div>
+        <div class="ev"><i>20:55</i>QQ 掉登录已 10 分钟</div>
+        <div class="ev"><i>17:00</i>QQ 掉登录已 430 分钟</div>
+      </div></div>
+      <div class="card"><h4>花费 <span>今天</span></h4><div>
+        <div class="big">11949.5<small>万 token</small></div>
+        <div class="row"><span>缓存读</span><b>11611 万</b></div>
+        <div class="row"><span>工具</span><b>695 次</b></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- B -->
+<div class="col B">
+  <div class="tag"><b>B</b> · 极简清单（像设置页）</div>
+  <div class="panel">
+    <div class="hd"><span class="dot"></span><span class="t">记忆</span><span class="v">286 份</span></div>
+    <div class="bd">
+      <h5>简报</h5>
+      <div class="li"><span>每轮注入</span><b>3420 字</b></div>
+      <div class="li"><span>组成文件</span><b>12 份</b></div>
+      <h5>库</h5>
+      <div class="li"><span>文件</span><b>286 份 · 83 MB</b></div>
+      <div class="li"><span>近两周改动</span><b>186 份次</b></div>
+      <div class="li"><span>最近动过</span><span class="sub">生长\预检-待注入.md</span></div>
+      <h5>今天</h5>
+      <div class="li"><span>21:55 QQ 掉登录已 70 分钟</span></div>
+      <div class="li"><span>20:55 QQ 掉登录已 10 分钟</span></div>
+      <div class="li"><span>17:00 QQ 掉登录已 430 分钟</span></div>
+      <h5>花费</h5>
+      <div class="li"><span>今天</span><b>11949.5 万</b></div>
+      <div class="li"><span>是昨天的 74%</span><b>695 次工具</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- C -->
+<div class="col C">
+  <div class="tag"><b>C</b> · 仪表盘网格（数字最大）</div>
+  <div class="panel">
+    <div class="hd"><span class="dot"></span><span class="t">记忆</span><span class="v">刷新</span></div>
+    <div class="bd">
+      <div class="grid">
+        <div class="cell"><div class="n">3420</div><div class="l">简报 · 字/轮</div></div>
+        <div class="cell"><div class="n">286</div><div class="l">记忆 · 份</div></div>
+        <div class="cell"><div class="n">8</div><div class="l">今天 · 条</div></div>
+        <div class="cell"><div class="n">695</div><div class="l">工具 · 次</div></div>
+      </div>
+      <div class="sec">近 7 天用量</div>
+      <div class="chart">
+        <i style="height:60%"></i><i style="height:54%"></i><i style="height:38%"></i>
+        <i style="height:43%"></i><i style="height:49%"></i><i style="height:99%"></i><i style="height:73%"></i>
+      </div>
+      <div class="xl"><span>10-29</span><span>10-31</span><span>11-02</span><span>11-04</span></div>
+      <div class="sec">今天</div>
+      <div style="font-size:11.5px;color:#5b6474;line-height:1.9">
+        21:55 QQ 掉登录已 70 分钟<br>
+        20:55 QQ 掉登录已 10 分钟<br>
+        17:00 QQ 掉登录已 430 分钟
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D -->
+<div class="col D">
+  <div class="tag"><b>D</b> · 时间线（今天为主）</div>
+  <div class="panel">
+    <div class="hd"><span class="dot"></span><span class="t">今天</span><span class="v">8 条</span></div>
+    <div class="bd">
+      <div class="sum">
+        <div><b>3420</b>简报字</div>
+        <div><b>286</b>记忆份</div>
+        <div><b>11949.5万</b>今天token</div>
+      </div>
+      <div class="tl">
+        <div class="it new"><time>21:55</time>QQ 掉登录已 70 分钟（NapCat 在等扫码）</div>
+        <div class="it"><time>20:55</time>QQ 掉登录已 10 分钟（NapCat 在等扫码）</div>
+        <div class="it"><time>17:00</time>QQ 掉登录已 430 分钟（NapCat 在等扫码）</div>
+        <div class="it"><time>16:00</time>QQ 掉登录已 370 分钟（NapCat 在等扫码）</div>
+        <div class="it"><time>15:00</time>QQ 掉登录已 310 分钟（NapCat 在等扫码）</div>
+        <div class="it"><time>14:00</time>QQ 掉登录已 250 分钟（NapCat 在等扫码）</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- E -->
+<div class="col E">
+  <div class="tag"><b>E</b> · 深色玻璃（最像现代面板）</div>
+  <div class="panel">
+    <div class="hd"><span class="dot"></span><span class="t">记忆</span><span class="v">刚刷新</span></div>
+    <div class="bd">
+      <div class="glow">
+        <div class="n">3420<small>字</small></div>
+        <div class="l">每轮注入的简报 · 12 份组成</div>
+      </div>
+      <div class="mini">
+        <div><div class="n">286</div><div class="l">记忆文件</div></div>
+        <div><div class="n">186</div><div class="l">两周改动</div></div>
+      </div>
+      <div class="list">
+        <div class="r"><b>21:55</b><span>QQ 掉登录已 70 分钟</span></div>
+        <div class="r"><b>20:55</b><span>QQ 掉登录已 10 分钟</span></div>
+        <div class="r"><b>17:00</b><span>QQ 掉登录已 430 分钟</span></div>
+      </div>
+      <div class="hint">今天 11949.5 万 token · 695 次工具<br>是昨天的 74%</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

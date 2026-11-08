@@ -1,0 +1,9 @@
+# 大肥鱼记忆 · 控制台面板（纯客户端）
+#
+# 它不读文件、不开端口、不 import 别的文件 —— 只把本地那个只读小网站
+# （127.0.0.1:17899，由 dafiyu-memory 插件启动时自动拉起）套进 DSH 的一页。
+#
+# 想停用它：把下面这三行删掉，下次重启 DSH 生效。
+- insert:
+    - id: dafiyu-console-panel
+      name: 'dafiyu-console-panel'

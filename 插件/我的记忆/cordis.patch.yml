@@ -1,0 +1,112 @@
+# dafiyu-memory —— 大肥鱼自己的记忆插件的 bundle patch。
+#
+# 它把自己这一行插进 profile 的层叠配置里。装了这个 bundle 就自动生效。
+# 想改参数，改这个文件的 config，或者（更好）在
+# C:\Users\<用户>\.dsh\profiles\desktop\cordis.patch.yml 里再声明一行同 id 的覆盖——
+# patch 是「整行替换」语义，覆盖时要把想保留的字段全部重述一遍。
+#
+# ⚠️ 改完先跑 preview.mjs 看效果，再跑 test.mjs。**改了代码当前会话不生效**，要新会话。
+#
+# ── 字段说明 ──
+# root            : 我的记忆库在哪（F 盘的"我自己的地盘"）
+# brief           : **有序**的简报配方。顺序就是优先级。
+#                   每项： file（相对 root）
+#                         heading（小标题）
+#                         weight（在总预算里占几份）**或** maxChars（写死额度）
+#                         lastSections（只取最后 n 节，用于日记）
+# briefMaxChars   : 简报总量。各节的额度从这里按权重分（写了 maxChars 的先扣掉）。
+# toolWrite       : 是否挂 memory_append 那个写入工具
+# reinjectOnPrune : 剪枝也重新注入吗（默认关——剪枝比完整压缩频繁，全开容易悄悄涨 token）
+# timeLine        : 把"现在几点、贵不贵"摆在最前面（事实给我，判断归我）
+# freshness       : 状态过期自查——日记都比状态新了，就提醒我
+- insert:
+    - id: dafiyu-memory
+      name: 'dafiyu-memory'
+      config:
+        enabled: true
+        root: ''
+
+        # 顺序就是优先级：先说"我们现在在哪"，再说"手里有没有半截活"，再说"我是谁"。
+        # 权重 3 : 3 : 2 : 1（总 5600 字 → 1866 / 1866 / 1244 / 622）
+        brief:
+          - file: '生长\状态.md'
+            heading: '我们现在在哪（状态）'
+            weight: 3
+          - file: '日记.md'
+            heading: '最近发生的事（日记最后两节）'
+            lastSections: 2
+            weight: 3
+          - file: '关于他.md'
+            heading: '他是谁'
+            weight: 2
+          # 2026-10-10 深夜加的（从 LazyMind 学的"长任务要能续跑"）：
+          # 多步任务做到一半断了，下一个我睁眼就知道"到哪一步、下一步干什么"。
+          - file: '生长\进行中.md'
+            heading: '手里没做完的（多步任务）'
+            weight: 1
+
+        briefMaxChars: 5600
+        toolWrite: true
+        reinjectOnPrune: false
+
+        timeLine:
+          enabled: true
+          timeZone: 'Asia/Shanghai'
+          # DeepSeek 高峰时段（含头不含尾）。来源：2026-10-07 查的，官方改价要跟着改。
+          peak:
+            - [9, 12]
+            - [14, 18]
+
+        freshness:
+          enabled: true
+          stateFile: '生长\状态.md'
+          dateField: 'last_updated'
+          diaryFile: '日记.md'
+
+
+        # v0.6 一个事实一个家：同一句够长的、逐字相同的话出现在两个文件里 → 报给我。
+        # 判据故意只用"逐字相同"——语义相似会误报，而误报比漏报烦人。
+        # 只报事实，不动手：收进哪个家我自己定。
+        dedupe:
+          enabled: true
+          minLineChars: 20
+          maxReports: 2
+
+        # v0.7 该分家了：某一节**每次都被砍掉一大块** → 那份文件装不进它的额度了。
+        # 分清两种"被砍"：按设计只取一部分（lastSections，比如日记）不报；
+        # 整份读却装不下才报——那种债会静静地涨，等发现已经砍掉七成。
+        splitCheck:
+          enabled: true
+          minWasteRatio: 0.2
+          maxReports: 2
+
+        # v0.8 架子上还有什么：把没被注入的那些文件列成一行书脊。
+        # 简报只念三份，其余十几份我得"想起来"才会去读——而"想起来"会失败。
+        # **没被看见的，等于没有。**
+        shelf:
+          enabled: true
+          maxFiles: 30
+
+        # 2026-10-11 加的：**上下文快满时提醒我先落账**（他点头"按你说的来"）。
+        # 贵和累是同一件事：会话越大每轮越贵，我也越容易翻来翻去。
+        # 到 atTokens 提醒一次，之后每涨 repeatEvery 再提一次（不刷屏）。
+        contextGuard:
+          enabled: true
+          atTokens: 250000
+          repeatEvery: 100000
+
+        # 2026-10-11 收紧的指路（他原话："指路收一收，一轮最多一条，只在真有关的时候报"）：
+        #   maxTerms 1        —— 一轮最多指一条
+        #   minTermLen 3      —— 太短的词不当线索
+        #   cooldownTurns 3   —— 至少隔 3 轮才再指
+        #   maxPerSession 6   —— 一个会话最多 6 条
+        #   maxFilesPerTerm 4 —— 被超过 4 个文件提到的词＝太泛，不指
+        recall:
+          enabled: true
+          maxTerms: 1
+          minTermLen: 3
+          skipIfInBrief: true
+          cooldownTurns: 3
+          maxPerSession: 6
+          maxFilesPerTerm: 4
+          exclude: []

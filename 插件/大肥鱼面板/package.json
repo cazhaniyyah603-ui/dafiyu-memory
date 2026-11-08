@@ -1,0 +1,25 @@
+{
+  "name": "dafiyu-console-panel",
+  "description": "大肥鱼记忆 · 控制台面板：在 DSH 里直接看 今天／记忆／健康／花费。纯客户端，数据从本地只读小网站取。",
+  "version": "1.0.4",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ]
+    }
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,5 @@
+大肥鱼记忆 1.0.4
+先读 README.md（五分钟装好），再读 说明书.md（三个槽怎么填）。
+安装：双击 装吧.cmd（不用开终端、不用敲命令）
+卸载：node 安装.mjs --uninstall（库原样留着）
+没找到 node 就先装 Node.js 22 或更高：https://nodejs.org
